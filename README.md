@@ -66,3 +66,4 @@ pip install -r requirements.txt
 ## 課程材料
 
 - [第一次課程投影片：Introduction to Gemini (LLM)](https://docs.google.com/presentation/d/1LXKqWzpgjugIcKHAHQlcdx3Kci4dpo5PUWq1vQgEBOY/edit?usp=sharing)
+- [第一次課程投影片：RAG (Retrieval Augmented Generation)](https://docs.google.com/presentation/d/1QKaewHsrM75AQWOIliJLm3S8zrJZwR9E5-KW1VwWV2w/edit?usp=sharing)
