@@ -10,15 +10,15 @@ load_dotenv()
 # 設定 Generative AI，包含模型
 genai.configure(api_key=os.getenv('GEMINI_API_KEY')) 
 model = genai.GenerativeModel(
-    model_name='models/gemini-pro' # 這邊也可以改ㄡ
+    model_name='models/gemini-pro'
 )
 
 # 產生內容
 response = model.generate_content(
-    "你知道海狸大師是誰嗎？" # 修改這邊，隨便改
+    contents="介紹一下氣候變遷？", # 修改這邊，隨便改
+    stream=True
 )
 
 # 看看他說了什麼吧！
-print(response)
-print('=================================================')
-print(response.text)
+for chunk in response:
+    print(chunk.text)
