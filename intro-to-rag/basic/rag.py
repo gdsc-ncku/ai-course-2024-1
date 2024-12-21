@@ -13,9 +13,15 @@ from dotenv import load_dotenv
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-def parse_paragraph(filename: str) -> list:
+def parse_paragraph(filename: str, chunk_size: int = 100, overlap: int = 50) -> list:
+    file_content = ""
     with open(filename, encoding="utf-8") as f:
-        return [line.strip() for line in f if line.strip()]
+        file_content = f.read()
+
+    paragraphs = []
+    for i in range(0, len(file_content), chunk_size - overlap):
+        paragraphs.append(file_content[i:i+chunk_size])
+    return paragraphs
 
 def get_embedding(data: str) -> list:
     response = openai.embeddings.create(
@@ -69,30 +75,26 @@ def find_top_k(prompt_embedding: list, embeddings: list, top_k: int) -> list:
     similar_vectors = calc_similar_vectors(prompt_embedding, embeddings)
     return [paragraphs[i] for i, _ in similar_vectors[:top_k]]
 
-def generate_system_prompt() -> str: # 為了好看
-    return (
-        "你是一個很好的助手，只能使用台灣人熟悉的繁體中文，並且根據使用者提供的上下文 (context) 來回答"
-        "如果提供的上下文不足以讓你有自信回答，就請使用者提供更多的上下文。"
-    )
-
-def format_context(contexts: list) -> str:
+def format_context(contexts: list[str]) -> str:
     if not contexts:
         return "上下文: 無"
     formatted = "\n".join(f"{i+1}. {ctx}" for i, ctx in enumerate(contexts))
     return f"上下文:\n{formatted}"
 
-def build_prompt(query: str, contexts: list[str]) -> str:
-    formatted_context = format_context(contexts)
-    return f"{formatted_context}\n\n查詢: {query}"
+def generate_system_prompt(contexts: list[str]) -> str: # 為了好看
+    return (
+        "你是一個很好的助手，只能使用台灣人熟悉的繁體中文，並且根據上下文 (context) 來回答"
+        "如果提供的上下文不足以讓你有自信回答，就請使用者提供更多的上下文。"
+        f"上下文: {format_context(contexts)}"
+    )
 
 def inference(query: str, context: list[str]) -> str:
-    system_prompt = generate_system_prompt()
-    prompt = build_prompt(query, context)
+    system_prompt = generate_system_prompt(context)
     response = openai.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": prompt},
+            {"role": "user", "content": query},
         ]
     )
     return response.choices[0].message.content
