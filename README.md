@@ -45,6 +45,17 @@ source .venv/bin/activate  # 在 Unix/macOS/Linux 上
 ```
 
 #### 選項 B：使用 Poetry
+先安裝 Poetry：
+```bash
+curl -sSL https://install.python-poetry.org | python3 -  # 在 Unix/macOS/Linux 上
+(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | python -  # 在 Windows 上
+```
+```bash
+export PATH=$PATH:$HOME/.local/bin  # 在 Unix/macOS/Linux 上
+$Env:Path += ";C:\Users\jetbrains\AppData\Roaming\Python\Scripts"; setx PATH "$Env:Path"  # 在 Windows 上（把 jetbrains 替換成自己的使用者路徑）
+```
+
+重啟 shell 之後：
 ```bash
 poetry shell
 ```
